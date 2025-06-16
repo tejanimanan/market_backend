@@ -87,7 +87,8 @@ async findAll(
   async findByEmail(email: string) {
     const user = await this.repo.findOneBy({ email });
     if (!user) {
-      throw new NotFoundException(`User with email ${email} not found`);
+      // throw new NotFoundException(`User with email ${email} not found`);
+      return null;
     }
     return user;
   }
