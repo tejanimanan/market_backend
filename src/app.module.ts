@@ -1,26 +1,40 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ScriptModule } from './script/script.module';
 import { ShareDataModule } from './share_data/share_data.module';
 
 @Module({
-  
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5433,
-      username: 'postgres',
-      password: '1234',
-      database: 'market_data',
-      autoLoadEntities: true,
-      synchronize: true, // false in production
-      entities: ['dist/**/*.entity.js'],
+    // Load .env variables globally
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
+
+    // Use DATABASE_URL from .env
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        url: config.get<string>('DATABASE_URL'),
+        autoLoadEntities: true,
+        synchronize: true,
+        ssl: true,
+        extra: {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        },
+      }),
+    }),
+
+
     UserModule,
     AuthModule,
     ScriptModule,
@@ -29,4 +43,4 @@ import { ShareDataModule } from './share_data/share_data.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
