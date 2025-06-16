@@ -27,4 +27,7 @@ export class AppService implements OnModuleInit {
       console.log('ℹ️ Admin user already exists');
     }
   }
+  getHello(): string {
+  return 'Hello World!';
+}
 }
