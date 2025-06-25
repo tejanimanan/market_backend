@@ -34,7 +34,7 @@ export class ScriptService {
     @InjectRepository(Script) private repo: Repository<Script>,
     private configService: ConfigService,
   ) {
-    this.refreshInterval = this.configService.get<number>('STOCK_REFRESH_INTERVAL', 10*60*1000);
+    this.refreshInterval = this.configService.get<number>('STOCK_REFRESH_INTERVAL', 5*60*1000);
   }
   
   async onModuleInit() {
